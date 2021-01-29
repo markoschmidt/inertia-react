@@ -1,7 +1,8 @@
-const mix = require('laravel-mix');
-const cssImport = require('postcss-import');
-const cssNesting = require('postcss-nesting');
-const tailwindcss = require('tailwindcss');
+const mix = require('laravel-mix')
+const cssImport = require('postcss-import')
+const cssNesting = require('postcss-nesting')
+const path = require('path')
+const tailwindcss = require('tailwindcss')
 
 /*
  |--------------------------------------------------------------------------
@@ -14,25 +15,31 @@ const tailwindcss = require('tailwindcss');
  |
  */
 
-mix.react(['resources/js/app.jsx'], 'js')
+mix.js(['resources/js/app.jsx'], 'js')
+    .react()
     .postCss('resources/css/app.css', 'css', [
         cssImport(),
         cssNesting(),
-        tailwindcss()
+        tailwindcss(),
     ])
     .webpackConfig({
         output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },
+        resolve: {
+            alias: {
+                '@': path.resolve('resources/js'),
+            },
+        },
     })
     .babelConfig({
         plugins: [
             '@babel/plugin-syntax-dynamic-import',
-            '@babel/plugin-proposal-class-properties'
-        ]
+            '@babel/plugin-proposal-class-properties',
+        ],
     })
-    .version();
+    .version()
 
 // https://browsersync.io/docs/options/
 mix.browserSync({
     proxy: 'laravel.test',
-    ws: false
-});
+    ws: false,
+})

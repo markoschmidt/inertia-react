@@ -1,20 +1,23 @@
-import * as React from 'react';
-import { InertiaLink } from '@inertiajs/inertia-react';
+import React from 'react';
+import Helmet from 'react-helmet';
+import Layout from '@/Components/Layout/Layout';
 
-class Index extends React.Component {
+const Dashboard = () => {
+  return (
+    <div>
+      <Helmet>
+        <title>Dashboard</title>
+      </Helmet>
+      <h1 className="mb-8 font-bold text-3xl">Dashboard</h1>
+      <p className="mb-12 leading-normal">
+        Navigate the app using the main menu
+      </p>
+    </div>
+  );
+};
 
-    render() {
+// Persistent layout
+// Docs: https://inertiajs.com/pages#persistent-layouts
+Dashboard.layout = page => <Layout children={page} />;
 
-        return (
-            <div>
-                <h1>Logged as {this.props.user.name}</h1>
-
-                <InertiaLink href="/logout" method='POST'>
-                    Logout
-                </InertiaLink>
-            </div>
-        );
-    }
-}
-
-export default Index;
+export default Dashboard;

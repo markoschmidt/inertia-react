@@ -1,5 +1,5 @@
-PROJECT=inertia
-DATABASE=inertia_db
+PROJECT=$(notdir $(CURDIR)) # project directory name
+DATABASE=$(PROJECT)_db
 
 php:
 	docker-compose exec app bash
@@ -98,6 +98,3 @@ update-production:
 
 export-localizations:
 	php scripts/langToExcel.php
-
-test:
-	docker-compose exec app bash npm install $(packages)

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -19,32 +19,17 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers {
-        showLoginForm as protected showLoginForm;
-    }
+    use AuthenticatesUsers;
 
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/';
 
-    /**
-     * @return \Inertia\Response
-     */
     public function showLoginForm()
     {
         return Inertia::render('Auth/Login');
-    }
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
     }
 }
