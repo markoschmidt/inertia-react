@@ -1,6 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import Layout from '@/Components/Layout/Layout';
+import { BaseLayout as Layout } from '@/Components/Layouts';
 
 const Dashboard = () => {
   return (

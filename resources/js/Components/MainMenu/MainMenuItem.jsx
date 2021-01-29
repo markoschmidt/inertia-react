@@ -1,7 +1,7 @@
 import React from 'react';
 import { InertiaLink } from '@inertiajs/inertia-react';
 import classNames from 'classnames';
-import Icon from '@/Components/Icon/Icon';
+import Icon from '@/Components/Icon';
 
 export default ({ icon, link, text }) => {
   const isActive = route().current(link + '*');

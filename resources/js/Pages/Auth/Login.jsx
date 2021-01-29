@@ -1,37 +1,36 @@
-import React, { useState } from 'react';
-import Helmet from 'react-helmet';
-import { Inertia } from '@inertiajs/inertia';
-import { usePage } from '@inertiajs/inertia-react';
-import LoadingButton from '@/Components/Buttons/LoadingButton';
-import TextInput from '@/Components/Form/TextInput';
+import React, { useEffect, useState } from 'react'
+import Helmet from 'react-helmet'
+import { Inertia } from '@inertiajs/inertia'
+import { usePage } from '@inertiajs/inertia-react'
+import { LoadingButton } from '@/Components/Buttons'
+import { TextInput } from '@/Components/Inputs'
 
 export default () => {
-  const { errors } = usePage().props;
+  const { props } = usePage()
+  const { errors } = props
 
-  const [sending, setSending] = useState(false);
+  const [sending, setSending] = useState(false)
   const [values, setValues] = useState({
     email: 'johndoe@example.com',
     password: 'password',
-    remember: true
-  });
+    remember: true,
+  })
 
   function handleChange(e) {
-    const key = e.target.name;
+    const key = e.target.name
     const value =
-      e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+      e.target.type === 'checkbox' ? e.target.checked : e.target.value
 
-    setValues(values => ({
+    setValues((values) => ({
       ...values,
-      [key]: value
-    }));
+      [key]: value,
+    }))
   }
 
   function handleSubmit(e) {
-    e.preventDefault();
-    setSending(true);
-    Inertia.post(route('login.attempt'), values).then(() => {
-      setSending(false);
-    });
+    e.preventDefault()
+    setSending(true)
+    Inertia.post(route('login.attempt'), values)
   }
 
   return (
@@ -93,5 +92,5 @@ export default () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}

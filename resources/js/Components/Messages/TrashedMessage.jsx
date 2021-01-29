@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '@/Components/Icon/Icon';
+import Icon from '@/Components/Icon';
 
 export default ({ onRestore, children }) => {
   return (

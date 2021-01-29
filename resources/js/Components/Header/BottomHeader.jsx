@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
-import Icon from '@/Components/Icon/Icon';
+import Icon from '@/Components/Icon';
 
 export default () => {
   const { auth } = usePage().props;
@@ -13,7 +13,7 @@ export default () => {
           onClick={() => setMenuOpened(true)}
         >
           <div className="text-gray-800 group-hover:text-indigo-600 focus:text-indigo-600 mr-1 whitespace-no-wrap">
-            <span>{auth.user.name}</span>
+            <span>{auth.user.name || auth.user.email}</span>
           </div>
           <Icon
             className="w-5 h-5 fill-current text-gray-800 group-hover:text-indigo-600 focus:text-indigo-600"

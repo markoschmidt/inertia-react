@@ -5,7 +5,7 @@ import FlashMessages from '@/Components/Messages/FlashMessages';
 import TopHeader from '@/Components/Header/TopHeader';
 import BottomHeader from '@/Components/Header/BottomHeader';
 
-export default function Layout({ children }) {
+export default function BaseLayout({ children }) {
   return (
     <div>
       <Helmet titleTemplate="%s | Inertia Demo" />

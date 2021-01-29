@@ -7,7 +7,7 @@ export default ({ loading, className, children, ...props }) => {
       className={`focus:outline-none flex items-center ${className}`}
       {...props}
     >
-      {loading && <div className="btn-spinner mr-2" />}
+      {loading && <div className="mr-2 btn-spinner" />}
       {children}
     </button>
   );
