@@ -3,6 +3,7 @@ const cssImport = require('postcss-import')
 const cssNesting = require('postcss-nesting')
 const path = require('path')
 const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
 
 /*
  |--------------------------------------------------------------------------
@@ -15,31 +16,35 @@ const tailwindcss = require('tailwindcss')
  |
  */
 
-mix.js(['resources/js/app.jsx'], 'js')
-    .react()
-    .postCss('resources/css/app.css', 'css', [
-        cssImport(),
-        cssNesting(),
-        tailwindcss(),
-    ])
-    .webpackConfig({
-        output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },
-        resolve: {
-            alias: {
-                '@': path.resolve('resources/js'),
-            },
-        },
-    })
-    .babelConfig({
-        plugins: [
-            '@babel/plugin-syntax-dynamic-import',
-            '@babel/plugin-proposal-class-properties',
-        ],
-    })
-    .version()
+mix
+  .js(['resources/js/app.jsx'], 'js')
+  .react()
+  .postCss('resources/css/app.css', 'css')
+  .options({
+    postCss: [
+      cssImport(),
+      cssNesting(),
+      tailwindcss('tailwind.config.js'),
+    ],
+  })
+  .webpackConfig({
+    output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },
+    resolve: {
+      alias: {
+        '@': path.resolve('resources/js'),
+      },
+    },
+  })
+  .babelConfig({
+    plugins: [
+      '@babel/plugin-syntax-dynamic-import',
+      '@babel/plugin-proposal-class-properties',
+    ],
+  })
+  .version()
 
 // https://browsersync.io/docs/options/
-mix.browserSync({
-    proxy: 'laravel.test',
-    ws: false,
-})
+// mix.browserSync({
+//   proxy: 'laravel.test',
+//   ws: false,
+// })

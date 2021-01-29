@@ -2,10 +2,18 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\UrlWindow;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
+// use League\Glide\Server;
+// use Illuminate\Support\Facades\Storage; // Uncomment if using Glide
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Date::use(CarbonImmutable::class);
     }
 
     public function registerInertia()

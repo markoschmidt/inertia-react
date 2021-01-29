@@ -34,6 +34,9 @@ mysql-load:
 mysql-dump:
 	docker exec -it $(PROJECT)_db_1 bash -c "mysqldump -uroot -psecret $(DATABASE) > dump.sql"
 
+migrate:
+	docker-compose exec app php artisan migrate
+
 restart-supervisor:
 	docker-compose exec app supervisorctl restart all
 
