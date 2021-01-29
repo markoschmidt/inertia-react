@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5c7892a4711060fd66242bebec91946",
+    "content-hash": "51b6f075e8a1e3d60516dd252a461921",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2478,53 +2478,6 @@
                 }
             ],
             "time": "2020-08-18T17:17:46+00:00"
-        },
-        {
-            "name": "ravenberg/laravel-inertia-react-preset",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "./vendor/ravenberg/laravel-inertia-react-preset",
-                "reference": "8f3a7001b7183dd712c5a3f107e998da9d716833"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Ravenberg\\InertiaReactPreset\\InertiaReactPresetServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Ravenberg\\InertiaReactPreset\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Ravenberg\\InertiaReactPreset\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Lee Ravenberg",
-                    "email": "lee@ravenberg.dev"
-                }
-            ],
-            "description": "An Inertia.js + Reactjs preset for the Laravel Framework",
-            "keywords": [
-                "inertia",
-                "laravel",
-                "preset",
-                "react",
-                "tailwindcss"
-            ],
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "swiftmailer/swiftmailer",
