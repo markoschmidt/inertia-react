@@ -95,9 +95,6 @@ class UserController extends Controller
      */
     public function update(User $user)
     {
-        dump(Request::only('name'));
-        dd($user);
-
         Request::validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user->id)],
@@ -109,8 +106,6 @@ class UserController extends Controller
         if (Request::get('password')) {
             $user->update(['password' => Request::get('password')]);
         }
-
-        dd($user);
 
         return Redirect::back()->with('success', 'User updated.');
     }

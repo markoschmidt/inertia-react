@@ -14,7 +14,7 @@ export default () => {
       <div>
         <Helmet title="Users" />
         <h1 className="mb-8 text-3xl font-bold">Users</h1>
-        <div className="overflow-x-auto bg-white shadow roudned">
+        <div className="overflow-x-auto bg-white rounded shadow">
           <table className="w-full whitespace-no-wrap">
             <thead>
               <tr className="font-bold text-left">

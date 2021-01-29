@@ -6,12 +6,12 @@ import { TextInput } from '@/Components/Inputs'
 import { LoadingButton } from '@/Components/Buttons'
 import { toFormData } from '@/utils'
 import Icon from '@/Components/Icon'
-import { Inertia } from '@inertiajs/inertia';
+import { Inertia } from '@inertiajs/inertia'
 
 export default () => {
   const { user, errors } = usePage().props
-  const [ sending, setSending ] = useState(false)
-  const [ values, setValues] = useState({
+  const [sending, setSending] = useState(false)
+  const [values, setValues] = useState({
     name: user.name,
     email: user.email,
     password: user.password,
@@ -24,7 +24,7 @@ export default () => {
 
     const formData = toFormData(values, 'PUT')
 
-    Inertia.put(route('users.update', user.id), formData).then(() => {
+    Inertia.post(route('users.update', user.id), formData).then(() => {
       setSending(false)
     })
   }
@@ -33,9 +33,9 @@ export default () => {
     const key = e.target.name
     const value = e.target.value
 
-    setValues(values => ({
+    setValues((values) => ({
       ...values,
-      [key]: value
+      [key]: value,
     }))
   }
 
@@ -83,8 +83,43 @@ export default () => {
                 onChange={handleChange}
               />
             </div>
-            <LoadingButton loading={sending} type="submit" className="ml-auto btn-indigo">Update User</LoadingButton>
+            <LoadingButton
+              loading={sending}
+              type="submit"
+              className="ml-auto btn-indigo"
+            >
+              Update User
+            </LoadingButton>
           </form>
+        </div>
+        <h1 className="mb-8 text-3xl font-bold">Roles</h1>
+        <div className="overflow-x-auto bg-white rounded shadow">
+          <table className="w-full whitespace-no-wrap">
+            <thead>
+              <tr className="font-bold text-left">
+                <th className="px-6 pt-5 pb-4" colSpan="2">
+                  Name
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {values.roles.map(({ id, name }) => {
+                ;<tr
+                  key={id}
+                  className="hover:bg-gray-100 focus-within:bg-gray-100"
+                >
+                  <td clasName="border-t">
+                    <InertiaLink
+                      href={route('roles.edit', id)}
+                      className="flex items-center px-6 py-4 focus:text-indigo"
+                    >
+                      {name}
+                    </InertiaLink>
+                  </td>
+                </tr>
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </Layout>
