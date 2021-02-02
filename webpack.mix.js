@@ -19,6 +19,7 @@ const autoprefixer = require('autoprefixer')
 mix
   .js(['resources/js/app.jsx'], 'js')
   .react()
+  .postCss('resources/css/custom.css', 'css/app.css')
   .postCss('resources/css/app.css', 'css')
   .options({
     postCss: [
