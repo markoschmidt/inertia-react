@@ -4,6 +4,7 @@ import { InertiaLink, usePage } from "@inertiajs/inertia-react";
 import { BaseLayout as Layout } from "@/Components/Layouts";
 import { Tree } from "antd";
 import "antd/dist/antd.css";
+import { Inertia } from "@inertiajs/inertia"
 
 
 export default () => {
@@ -14,7 +15,6 @@ export default () => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dropPos = info.node.pos.split("-");
-    console.log(info.node)
     const dropPosition =
       info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
@@ -55,11 +55,9 @@ export default () => {
         item.children.unshift(dragObj);
       });
     } else {
-      let ar;
-      let i;
+      let ar, i;
       loop(data, dropKey, (item, index, arr) => {
-        ar = arr;
-        i = index;
+        ar = arr, i = index;
       });
       if (dropPosition === -1) {
         ar.splice(i, 0, dragObj);
@@ -69,17 +67,42 @@ export default () => {
     }
 
     setCategories(data)
+    // TODO: Save the new category structure (order is not kept atm)
+    Inertia.post(route('categories.updateTree'), data)
   };
+
+  // TODO: WIP
+  const onExpand = (expandedKeys, info, data) => {
+    const node = info.node; // Toggled node
+    const expanded = info.expanded; // Was it expanded?
+
+    // Keep opened node + parent nodes, collapse others
+
+    console.log(expandedKeys)
+    let keepOpen = [];
+    expandedKeys.reverse().map((key, index) => {
+      if (key === node.key) {
+        keepOpen.push(key)
+        let parent = data.find(item => item.key === node.parent_id)
+        if (parent) {
+          keepOpen.push(parent.id)
+        }
+      }
+    })
+
+    console.log(keepOpen)
+
+  }
 
   return (
     <Layout>
       <div>
         <Helmet title="Categories" />
         <Tree
-          className="draggable-tree"
           treeData={data}
           draggable
           blockNode
+          onExpand={(keys, info) => onExpand(keys, info, data)}
           onDrop={(info) => onDrop(info, data, setData)}
         />
         <h1 className="mb-8 text-3xl font-bold">Categories</h1>

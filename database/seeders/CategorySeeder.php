@@ -14,34 +14,13 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        Category::create([
-            'title' => ['en' => 'Main category 1', 'fi' => 'Pääkategoria 1'],
-        ]);
-        Category::create([
-            'title' => ['en' => 'Main category 2', 'fi' => 'Pääkategoria 2'],
-        ]);
-        Category::create([
-            'title' => ['en' => 'Main category 3', 'fi' => 'Pääkategoria 3'],
-        ]);
-        Category::create([
-            'title' => ['en' => 'Subcategory 1-1', 'fi' => 'Alakategoria 1-1'],
-            'parent_id' => 1
-        ]);
-        Category::create([
-            'title' => ['en' => 'Subcategory 1-2', 'fi' => 'Alakategoria 1-2'],
-            'parent_id' => 1
-        ]);
-        Category::create([
-            'title' => ['en' => 'Subcategory 3-1', 'fi' => 'Alakategoria 3-1'],
-            'parent_id' => 3
-        ]);
-        Category::create([
-            'title' => ['en' => 'Subcategory 3-2', 'fi' => 'Alakategoria 3-2'],
-            'parent_id' => 3
-        ]);
-        Category::create([
-            'title' => ['en' => 'Subcategory 3-1-1', 'fi' => 'Alakategoria 3-1-1'],
-            'parent_id' => 6
-        ]);
+        for ($i = 1; $i <= 50; $i++) {
+            $randomNumber = rand(0, $i) / 2;
+            $parent =  $randomNumber > 1 ? floor($randomNumber) : null;
+            Category::create([
+                'title' => ['en' => "Main category $i", 'fi' => "Pääkategoria $i"],
+                'parent_id' => $parent,
+            ]);
+        }
     }
 }

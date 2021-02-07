@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\Request as HttpRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -20,7 +22,7 @@ class CategoryController extends Controller
         return Inertia::render('Categories/Index', [
             'filters' => [],
             'categories' => Category::whereNull('parent_id')->with('children')
-                ->order('title')
+                ->order('order')
                 ->filter(Request::only('search', 'role', 'trashed'))
                 ->get()
                 ->transform(function ($category) {
@@ -88,6 +90,33 @@ class CategoryController extends Controller
         $category->update(Request::only('title', 'parent_id'));
 
         return Redirect::back()->with('success', 'Category updated.');
+    }
+
+    public function updateTree(HttpRequest $request)
+    {
+        $categories = $request->all();
+
+        function loop($items, $parent, $callback) {
+            foreach ($items as $order => $item) {
+                if (count($item['children']) > 0) {
+                    $callback($item, $parent, $order);
+                    loop($item['children'], $item['id'], $callback);
+                } else {
+                    $callback($item, $parent, $order);
+                }
+            }
+        }
+
+        loop($categories, null, function ($item, $parent, $order) {
+            $item['parent_id'] = $parent;
+            $item['order'] = $order;
+            // dump($item);
+            $category = Category::find($item['id']);
+            unset($item['id'], $item['key']);
+            $category->update($item);
+        });
+
+        return Redirect::back()->with('success', 'Category tree updated.');
     }
 
     /**

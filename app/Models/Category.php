@@ -16,6 +16,7 @@ class Category extends Model
     protected $fillable = [
         'title',
         'parent_id',
+        'order',
     ];
 
     public function children()
@@ -36,9 +37,9 @@ class Category extends Model
         }
 
         if ($addRelations) {
-            $data['children'] = $this->children->transform(function ($category) use ($isTree) {
+            $data['children'] = $this->children()->count() ? $this->children->toQuery()->order('order')->get()->transform(function ($category) use ($isTree) {
                 return $category->getData(true, $isTree);
-            });
+            }) : [];
         }
 
         return $data;

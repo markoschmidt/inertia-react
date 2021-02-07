@@ -7,9 +7,9 @@ namespace App\Traits;
  */
 trait ModelScopes
 {
-    public function scopeOrder($query, $attribute)
+    public function scopeOrder($query, $attribute, $dir = 'asc')
     {
-        $query->orderBy($attribute);
+        $query->orderBy($attribute, $dir);
     }
 
     public function scopeFilter($query, array $filters)
