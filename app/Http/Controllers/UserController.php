@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
@@ -26,12 +27,7 @@ class UserController extends Controller
                 ->filter(Request::only('search', 'role', 'trashed'))
                 ->paginate()
                 ->transform(function ($user) {
-                    return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'deleted_at' => $user->deleted_at,
-                    ];
+                    return $user->getData(true);
                 }),
         ]);
     }
@@ -76,14 +72,11 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $role = Role::find(3);
+        $user->roles()->attach($role);
+
         return Inertia::render('Users/Edit', [
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'deleted_at' => $user->deleted_at,
-                'roles' => $user->roles()->get()->map->only('id', 'name'),
-            ],
+            'user' => $user->getData(true),
         ]);
     }
 

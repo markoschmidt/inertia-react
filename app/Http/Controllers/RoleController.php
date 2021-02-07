@@ -71,11 +71,7 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         return Inertia::render('Roles/Edit', [
-            'role' => [
-                'id' => $role->id,
-                'first_name' => $role->first_name,
-                'deleted_at' => $role->deleted_at,
-            ],
+            'role' => $role->getData(true),
         ]);
     }
 

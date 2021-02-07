@@ -45,13 +45,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Inertia::share([
+            'locale' => function () {
+                return \App::getLocale();
+            },
             'auth' => function () {
                 return [
                     'user' => Auth::user() ? [
                         'id' => Auth::user()->id,
                         'name' => Auth::user()->name,
                         'email' => Auth::user()->email,
-                        // 'role' => Auth::user()->role,
                     ] : null,
                 ];
             },

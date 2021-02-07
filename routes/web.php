@@ -18,8 +18,9 @@ Route::post('logout')->name('logout')->uses('Auth\LoginController@logout');
 
 Route::group(['middleware' => 'auth'], function () {
     // Dashboard
-    Route::get('/')->name('dashboard')->uses('DashboardController');
+    Route::get('/')->name('dashboard')->uses('UserController@index');
 
     Route::resource('users', 'UserController');
     Route::resource('roles', 'RoleController');
+    Route::resource('permissions', 'PermissionController');
 });

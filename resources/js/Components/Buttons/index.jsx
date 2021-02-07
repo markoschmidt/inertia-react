@@ -1,5 +1,5 @@
-import LoadingButton from './LoadingButton'
+import LoadingButton from "./LoadingButton";
+import LogoutButton from "./LogoutButton";
+import LinkButton from "./LinkButton";
 
-export {
-  LoadingButton
-}
+export { LoadingButton, LogoutButton, LinkButton };

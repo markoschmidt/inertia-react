@@ -9,21 +9,13 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Notifications\Notifiable;
-use App\Traits\HasTranslations;
 use App\Traits\ModelScopes;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use HasFactory, Notifiable, Authenticatable, Authorizable, HasTranslations, HasRoles, ModelScopes;
-
-    /**
-     * Translatable attributes
-     *
-     * @var array
-     */
-    public $translatable = [];
+    use HasFactory, Notifiable, Authenticatable, Authorizable, HasRoles, ModelScopes;
 
     /**
      * The attributes that are mass assignable.
@@ -58,5 +50,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::make($password);
+    }
+
+    public function getData($addRelations = false)
+    {
+        $userData = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'deleted_at' => $this->deleted_at,
+        ];
+
+        if ($addRelations) {
+            $userData['roles'] = $this->roles()->get()->transform(function ($role) {
+                return $role->getData();
+            });
+        }
+
+        return $userData;
     }
 }
