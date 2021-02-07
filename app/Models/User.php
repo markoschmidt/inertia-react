@@ -54,7 +54,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getData($addRelations = false)
     {
-        $userData = [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
@@ -62,11 +62,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         ];
 
         if ($addRelations) {
-            $userData['roles'] = $this->roles()->get()->transform(function ($role) {
+            $data['roles'] = $this->roles()->get()->transform(function ($role) {
                 return $role->getData();
             });
         }
 
-        return $userData;
+        return $data;
     }
 }

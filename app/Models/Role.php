@@ -15,18 +15,17 @@ class Role extends SpatieRole
 
     public function getData($addRelations = false)
     {
-        $roleData = [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
         ];
 
         if ($addRelations) {
-            $roleData['permissions'] = $this->permissions()->get()->transform(function ($permission) {
+            $data['permissions'] = $this->permissions()->get()->transform(function ($permission) {
                 return $permission->getData();
             });
         }
 
-        return $roleData;
-
+        return $data;
     }
 }
