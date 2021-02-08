@@ -10,6 +10,7 @@ import { Inertia } from "@inertiajs/inertia"
 export default () => {
   const { categories } = usePage().props;
   const [data, setData] = useState(categories);
+  const [expandedKeys, setExpandedKeys] = useState([]);
 
   const onDrop = (info, categories, setCategories) => {
     const dropKey = info.node.key;
@@ -72,25 +73,55 @@ export default () => {
   };
 
   // TODO: WIP
-  const onExpand = (expandedKeys, info, data) => {
+  const onExpand = (expandedKeys, info, data, setExpandedKeys) => {
     const node = info.node; // Toggled node
     const expanded = info.expanded; // Was it expanded?
 
     // Keep opened node + parent nodes, collapse others
 
-    console.log(expandedKeys)
     let keepOpen = [];
-    expandedKeys.reverse().map((key, index) => {
-      if (key === node.key) {
-        keepOpen.push(key)
-        let parent = data.find(item => item.key === node.parent_id)
+
+    const loop = (item, data, callback) => {
+      console.log('callback for', item.key)
+      callback(item);
+      if (item.parent_id) {
+        let parent = data.find(i => i.key === item.parent_id)
+        console.log(item)
+        console.log(parent)
         if (parent) {
-          keepOpen.push(parent.id)
+          console.log('loop', parent.key)
+          loop(parent, data, callback);
         }
       }
+    };
+
+    // console.log(info)
+    let current = info.node;
+    loop(current, data, (item) => {
+      // console.log('do stuff to', item.key)
+      // keepOpen.push(item.key)
     })
+    // loop(expandedKeys.reverse().slice(0, 1), (key) => {
+    //   keepOpen.push(key)
+    //   let node = data.find(item => item.key === key)
+    //   console.log(node)
+    //   if (node.parent_id) {
+    //     // loop()
+    //   }
+    // });
+
+    // expandedKeys.reverse().map((key, index) => {
+    //   if (key === node.key) {
+    //     keepOpen.push(key)
+    //     let parent = data.find(item => item.key === node.parent_id)
+    //     if (parent) {
+    //       keepOpen.push(parent.id)
+    //     }
+    //   }
+    // })
 
     console.log(keepOpen)
+    // setExpandedKeys(keepOpen)
 
   }
 
@@ -102,7 +133,7 @@ export default () => {
           treeData={data}
           draggable
           blockNode
-          onExpand={(keys, info) => onExpand(keys, info, data)}
+          onExpand={(keys, info) => onExpand(keys, info, data, setExpandedKeys)}
           onDrop={(info) => onDrop(info, data, setData)}
         />
         <h1 className="mb-8 text-3xl font-bold">Categories</h1>
