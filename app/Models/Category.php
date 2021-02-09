@@ -19,9 +19,22 @@ class Category extends Model
         'order',
     ];
 
+    protected $with = ['children'];
+
+    protected $appends = ['key'];
+
+    protected $hidden = [
+        'updated_at', 'created_at'
+    ];
+
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function getKeyAttribute()
+    {
+        return $this->id;
     }
 
     public function getData($addRelations = false, $isTree = false)

@@ -21,13 +21,9 @@ class CategoryController extends Controller
     {
         return Inertia::render('Categories/Index', [
             'filters' => [],
-            'categories' => Category::whereNull('parent_id')->with('children')
+            'categories' => Category::whereNull('parent_id')
                 ->order('order')
-                ->filter(Request::only('search', 'role', 'trashed'))
                 ->get()
-                ->transform(function ($category) {
-                    return $category->getData(true, true);
-                }),
         ]);
     }
 
