@@ -6,6 +6,8 @@ import { Tree } from "antd";
 import "antd/dist/antd.css";
 import { Inertia } from "@inertiajs/inertia";
 import { loop } from "@/utils";
+import { ArrowDownOutlined } from '@ant-design/icons';
+import "./styles.css";
 
 
 export default () => {
@@ -70,8 +72,6 @@ export default () => {
 
     // Keep opened node + parent nodes, collapse others
 
-
-
     let keepOpen = [];
     keepOpen.push(node.key)
     expandedKeys.reverse().map((key, index, arr) => {
@@ -89,13 +89,14 @@ export default () => {
 
   return (
     <Layout>
-      <div>
+      <div className="w-3/12">
         <Helmet title="Categories" />
         <h1 className="mb-8 text-3xl font-bold">Categories</h1>
         <Tree
           treeData={data}
           draggable
           blockNode
+          switcherIcon={<ArrowDownOutlined style={{fontSize: 16}} />}
           onExpand={(keys, info) => onExpand(keys, info, data, setExpandedKeys)}
           onDrop={(info) => onDrop(info, data, setData)}
         />
