@@ -73,15 +73,19 @@ export default () => {
     // Keep opened node + parent nodes, collapse others
 
     let keepOpen = [];
-    keepOpen.push(node.key)
-    expandedKeys.reverse().map((key, index, arr) => {
-      let item = null
-      // Find the current item recursively
-      loop(data, key, (it) => {
-        item = it
-      })
-      if (item && item.parent_id) { keepOpen.push(item.parent_id); }
-    });
+    if (expanded) {
+      keepOpen.push(node.key)
+      expandedKeys.reverse().map((key, index, arr) => {
+        let item = null
+        // Find the current item recursively
+        loop(data, key, (it) => {
+          item = it
+        })
+        if (item && item.parent_id) { keepOpen.push(item.parent_id); }
+      });
+    } else {
+      keepOpen = expandedKeys
+    }
 
     setExpandedKeys(keepOpen)
 

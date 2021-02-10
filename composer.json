@@ -12,6 +12,7 @@
         "barryvdh/laravel-debugbar": "^3.5",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
+        "google/cloud-vision": "^1.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "illuminate/console": "^8.25",
         "inertiajs/inertia-laravel": "^0.3.6",

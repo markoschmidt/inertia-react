@@ -1,6 +1,7 @@
 .ant-tree-switcher {
     order: 1;
-    border-left: 1px solid;
+    border-bottom: 1px solid;
+    margin-left: -1px;
     padding: 4px 0 4px 0;
     width: 32px;
 }
@@ -10,14 +11,15 @@
 
 .ant-tree-node-content-wrapper {
     padding: 4px 0 4px 4px !important;
+    border-bottom: 1px solid;
 }
 
 .ant-tree-treenode {
-    border: 1px solid;
-    border-bottom: none;
+    /* border: 1px solid;
+    border-bottom: none; */
     padding-bottom: 0 !important;
 }
 
 .ant-tree-treenode:last-of-type {
-    border-bottom: 1px solid;
+    /* border-bottom: 1px solid; */
 }
