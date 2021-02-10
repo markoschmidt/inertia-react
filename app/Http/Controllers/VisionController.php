@@ -14,6 +14,7 @@ class VisionController extends Controller
         $this->annotator = new ImageAnnotatorClient();
     }
 
+    // TODO: Add a simple UI
     public function index()
     {
         $path = storage_path('app/public/wakeupcat.jpg');
@@ -21,9 +22,6 @@ class VisionController extends Controller
         $labels = $this->labelDetection($image);
         $props = $this->imageProperties($image);
         $text = $this->textDetection($image);
-
-
-        dd('stop');
     }
 
     public function labelDetection($image)
