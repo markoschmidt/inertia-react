@@ -22,6 +22,9 @@ stop:
 build:
 	docker-compose build
 
+make restart:
+	docker-compose restart
+
 mysql-drop:
 	docker exec -it $(PROJECT)_db_1 bash -c "mysql -uroot -psecret -e 'drop database $(DATABASE);'"
 
