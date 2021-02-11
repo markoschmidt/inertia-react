@@ -41,7 +41,8 @@ class VisionController extends Controller
         $arr = [];
         if ($labels) {
             foreach ($labels as $label) {
-                $arr[] = $label->getDescription();
+                $key = $label->getScore();
+                $arr["$key"] = $label->getDescription();
             }
         }
 

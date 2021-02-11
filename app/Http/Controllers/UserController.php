@@ -72,9 +72,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $role = Role::find(3);
-        $user->roles()->attach($role);
-
         return Inertia::render('Users/Edit', [
             'user' => $user->getData(true),
         ]);

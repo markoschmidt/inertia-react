@@ -7,7 +7,7 @@ import "antd/dist/antd.css";
 import { Inertia } from "@inertiajs/inertia";
 import { loop } from "@/utils";
 import { ArrowDownOutlined } from '@ant-design/icons';
-import "./styles.css";
+// import "./styles.css";
 
 
 export default () => {

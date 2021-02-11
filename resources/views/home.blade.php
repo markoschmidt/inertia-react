@@ -36,11 +36,8 @@
 <h3 class="label">Google Vision</h3>
 @if ($labels ?? false)
 <h4 class="label">Categories</h4>
-@foreach($labels as $label)
-@if ($loop->first)
-@else-
-@endif
-<span>{{$label}}</span>
+@foreach($labels as $key => $label)
+<div class="sublabel">Confidence: <span class="value">{{$key}}</span> --- Category: <span class="value">{{$label}}</span></div>
 @endforeach
 @endif
 
