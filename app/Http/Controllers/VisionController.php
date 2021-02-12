@@ -19,7 +19,7 @@ class VisionController extends Controller
         $filepath = '/storage/sample_1280x853.jpg';
         if ($request->has('file')) {
             $file = $request->file('file');
-            $filepath = '/storage/'.$file->getClientOriginalName();
+            $filepath = '/storage/' . $file->getClientOriginalName();
             if (!file_exists(public_path($filepath))) {
                 file_put_contents(public_path($filepath), file_get_contents($file));
             }
@@ -56,15 +56,17 @@ class VisionController extends Controller
         $props = $response->getImagePropertiesAnnotation();
 
         $arr = [];
-        foreach ($props->getDominantColors()->getColors() as $colorInfo) {
-            $key = round($colorInfo->getPixelFraction(), 3);
-            $color = $colorInfo->getColor();
-            $r = intval($color->getRed());
-            $g = intval($color->getGreen());
-            $b = intval($color->getBlue());
-            $arr["$key"] = "R$r - G$g - B$b";
+        if ($props) {
+            foreach ($props->getDominantColors()->getColors() as $colorInfo) {
+                $key = round($colorInfo->getPixelFraction(), 3);
+                $color = $colorInfo->getColor();
+                $r = intval($color->getRed());
+                $g = intval($color->getGreen());
+                $b = intval($color->getBlue());
+                $arr["$key"] = "R$r - G$g - B$b";
 
-            krsort($arr);
+                krsort($arr);
+            }
         }
         $this->annotator->close();
         return $arr;
