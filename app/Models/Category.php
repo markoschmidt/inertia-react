@@ -40,13 +40,14 @@ class Category extends Model
     public function getData($addRelations = false, $isTree = false)
     {
         $data = [
-            'id' => $this->id,
-            'title' => $this->title,
+            'title' => $this->getTranslations('title'),
             'parent_id' => $this->parent_id,
         ];
 
         if ($isTree) {
             $data['key'] = $this->id;
+        } else {
+            $data['id'] = $this->id;
         }
 
         if ($addRelations) {

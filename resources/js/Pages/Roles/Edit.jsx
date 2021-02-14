@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Helmet from "react-helmet";
-import { InertiaLink, usePage } from "@inertiajs/inertia-react";
+import { InertiaLink, usePage, useRemember } from "@inertiajs/inertia-react";
 import { BaseLayout as Layout } from "@/Components/Layouts";
 import { TextInput } from "@/Components/Inputs";
 import { LoadingButton } from "@/Components/Buttons";
@@ -11,11 +11,9 @@ import { Inertia } from "@inertiajs/inertia";
 export default () => {
   const { role, errors, locale } = usePage().props;
   const [sending, setSending] = useState(false);
-  const [values, setValues] = useState({
+  const [values, setValues] = useRemember({
     name: role.name,
   });
-
-  console.log(role.permissions)
 
   function handleSubmit(e) {
     e.preventDefault();
