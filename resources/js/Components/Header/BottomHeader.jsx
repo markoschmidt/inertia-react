@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { InertiaLink, usePage } from "@inertiajs/inertia-react";
 import Icon from "@/Components/Icon";
 import Dropdown from "@/Components/Dropdown";
 import { LogoutButton, LinkButton } from "@/Components/Buttons";
+import { MainContext } from "../../Contexts/MainContext"
 
 export default () => {
   const { auth } = usePage().props;
   const [menuOpened, setMenuOpened] = useState(false);
+  const { locale, toggleLocale } = useContext(MainContext);
+
   return (
     <div className="flex items-center justify-end w-full p-4 text-sm bg-white border-b md:py-0 md:px-12 d:text-md">
+      <button className="px-4" onClick={() => toggleLocale()}>{locale}</button>
       <Dropdown>
         <div
           key="icon"
