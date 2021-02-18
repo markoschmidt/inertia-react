@@ -14,7 +14,7 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= 500; $i++) {
             $randomNumber = rand(0, $i) / 2;
             $parent =  $randomNumber > 1 ? floor($randomNumber) : null;
             Category::create([
