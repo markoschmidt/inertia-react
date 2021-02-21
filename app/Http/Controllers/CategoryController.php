@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -19,11 +21,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
+
         return Inertia::render('Categories/Index', [
             'filters' => [],
-            'categories' => Category::whereNull('parent_id')
+            'categories' => fn () => Category::whereNull('parent_id')
                 ->order('order')
                 ->get()
+                ->transform(function ($category) {
+                    return $category->getData(['children'], true);
+                }),
+            'category' => fn () =>
+                Request::input('category')
+                ? Category::find(Request::input('category'))->getData(['products'], true)
+                :  null
+
         ]);
     }
 
@@ -67,6 +78,7 @@ class CategoryController extends Controller
     {
         return Inertia::render('Categories/Edit', [
             'category' => $category->getData(true),
+            'can' => Auth::user()->can('categories.edit.' . $category->id)
         ]);
     }
 
@@ -88,27 +100,39 @@ class CategoryController extends Controller
         return Redirect::back()->with('success', 'Category updated.');
     }
 
+    /**
+     * Update the category tree after a category is dropped to a new place
+     * TODO: Allow category data updates as well, does it require any changes?
+     *
+     * @param HttpRequest $request
+     * @return void
+     */
     public function updateTree(HttpRequest $request)
     {
         $categories = $request->all();
 
-        function loop($items, $parent, $callback) {
+        // Helper to loop through all nodes in a tree
+        // TODO: Move this somewhere else to make it usable elsewhere
+        function loop($items, $parent, $callback)
+        {
             foreach ($items as $order => $item) {
                 if (count($item['children']) > 0) {
                     $callback($item, $parent, $order);
-                    loop($item['children'], $item['id'], $callback);
+                    loop($item['children'], $item['key'], $callback);
                 } else {
                     $callback($item, $parent, $order);
                 }
             }
         }
 
+        // Order is just the id of the category within it's parent array
+        // This should be adequate to save the category's position in the tree
         loop($categories, null, function ($item, $parent, $order) {
             $item['parent_id'] = $parent;
             $item['order'] = $order;
             // dump($item);
-            $category = Category::find($item['id']);
-            unset($item['id'], $item['key']);
+            $category = Category::find($item['key']);
+            unset($item['key']);
             $category->update($item);
         });
 

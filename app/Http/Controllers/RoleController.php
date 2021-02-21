@@ -27,7 +27,7 @@ class RoleController extends Controller
                 ->transform(function ($role) {
                     return [
                         'id' => $role->id,
-                        'name' => $role->name,
+                        'name' => $role->getTranslations('name'),
                         'deleted_at' => $role->deleted_at,
                     ];
                 }),

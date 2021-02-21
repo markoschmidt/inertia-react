@@ -24,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerInertia();
         $this->registerLengthAwarePaginator();
     }
 
@@ -36,39 +35,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Date::use(CarbonImmutable::class);
-    }
-
-    public function registerInertia()
-    {
-        Inertia::version(function () {
-            return md5_file(public_path('mix-manifest.json'));
-        });
-
-        Inertia::share([
-            'locale' => function () {
-                return \App::getLocale();
-            },
-            'auth' => function () {
-                return [
-                    'user' => Auth::user() ? [
-                        'id' => Auth::user()->id,
-                        'name' => Auth::user()->name,
-                        'email' => Auth::user()->email,
-                    ] : null,
-                ];
-            },
-            'flash' => function () {
-                return [
-                    'success' => Session::get('success'),
-                    'error' => Session::get('error'),
-                ];
-            },
-            'errors' => function () {
-                return Session::get('errors')
-                    ? Session::get('errors')->getBag('default')->getMessages()
-                    : (object) [];
-            },
-        ]);
     }
 
     protected function registerLengthAwarePaginator()
@@ -95,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
                     return [
                         'data' => $this->items->toArray(),
                         'links' => $this->links(),
+                        'total' => $this->total,
+                        'perPage' => $this->perPage(),
+                        'lastPage' => $this->lastPage(),
+                        'currentPage' => $this->currentPage()
                     ];
                 }
 
@@ -102,43 +72,76 @@ class AppServiceProvider extends ServiceProvider
                 {
                     $this->appends(Request::all());
 
-                    $window = UrlWindow::make($this);
+                    // $window = UrlWindow::make($this);
+                    $elements = [];
 
-                    $elements = array_filter([
-                        $window['first'],
-                        is_array($window['slider']) ? '...' : null,
-                        $window['slider'],
-                        is_array($window['last']) ? '...' : null,
-                        $window['last'],
-                    ]);
-
-                    return Collection::make($elements)->flatMap(function ($item) {
-                        if (is_array($item)) {
-                            return Collection::make($item)->map(function ($url, $page) {
-                                return [
-                                    'url' => $url,
-                                    'label' => $page,
-                                    'active' => $this->currentPage() === $page,
-                                ];
-                            });
-                        } else {
-                            return [
-                                [
-                                    'url' => null,
-                                    'label' => '...',
-                                    'active' => false,
-                                ],
-                            ];
-                        }
-                    })->prepend([
+                    $current = [
+                        'url' => null,
+                        'label' => 'Current',
+                        'active' => true
+                    ];
+                    $first = [
+                        'url' => $this->url(1),
+                        'label' => 'First',
+                        'active' => false,
+                    ];
+                    $previous = [
                         'url' => $this->previousPageUrl(),
                         'label' => 'Previous',
                         'active' => false,
-                    ])->push([
+                    ];
+                    $next = [
                         'url' => $this->nextPageUrl(),
                         'label' => 'Next',
                         'active' => false,
-                    ]);
+                    ];
+                    $last = [
+                        'url' => $this->url($this->lastPage()),
+                        'label' => 'Last',
+                        'active' => false,
+                    ];
+
+                    array_push($elements, $current);
+                    $this->currentPage !== 1 && array_unshift($elements, $first, $previous);
+                    $this->currentPage !== $this->lastPage() && array_push($elements, $next, $last);
+
+                    return $elements;
+
+                    // $elements = array_filter([
+                    //     $window['first'],
+                    //     is_array($window['slider']) ? '...' : null,
+                    //     $window['slider'],
+                    //     is_array($window['last']) ? '...' : null,
+                    //     $window['last'],
+                    // ]);
+
+                    // return Collection::make($elements)->flatMap(function ($item) {
+                    //     if (is_array($item)) {
+                    //         return Collection::make($item)->map(function ($url, $page) {
+                    //             return [
+                    //                 'url' => $url,
+                    //                 'label' => $page,
+                    //                 'active' => $this->currentPage() === $page,
+                    //             ];
+                    //         });
+                    //     } else {
+                    //         return [
+                    //             [
+                    //                 'url' => null,
+                    //                 'label' => '...',
+                    //                 'active' => false,
+                    //             ],
+                    //         ];
+                    //     }
+                    // })->prepend([
+                    //     'url' => $this->previousPageUrl(),
+                    //     'label' => 'Previous',
+                    //     'active' => false,
+                    // ])->push([
+                    //     'url' => $this->nextPageUrl(),
+                    //     'label' => 'Next',
+                    //     'active' => false,
+                    // ]);
                 }
             };
         });

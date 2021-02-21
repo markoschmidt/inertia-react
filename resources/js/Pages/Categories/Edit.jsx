@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Helmet from "react-helmet";
 import { InertiaLink, usePage } from "@inertiajs/inertia-react";
 import { BaseLayout as Layout } from "@/Components/Layouts";
@@ -6,10 +6,12 @@ import { TextInput } from "@/Components/Inputs";
 import { LoadingButton } from "@/Components/Buttons";
 import { toFormData } from "@/utils";
 import { Inertia } from "@inertiajs/inertia";
+import { MainContext } from "@/Contexts/MainContext";
 
 export default () => {
-  const { category, errors } = usePage().props;
+  const { category, errors, can } = usePage().props;
   const [sending, setSending] = useState(false);
+  const { locale } = useContext(MainContext);
   const [values, setValues] = useState({
     title: category.title,
   });
@@ -38,7 +40,7 @@ export default () => {
   return (
     <Layout>
       <div>
-        <Helmet title={`Category ${category.title}`} />
+        <Helmet title={`Edit ${category.title[locale]}`} />
         <div className="flex justify-start max-w-lg mb-8">
           <h1 className="text-3xl font-bold">
             <InertiaLink
@@ -48,7 +50,7 @@ export default () => {
               Categories
             </InertiaLink>
             <span className="mx-2 font-medium text-indigo-600">/</span>
-            {values.title}
+            {values.title[locale]}
           </h1>
         </div>
         <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
@@ -59,12 +61,13 @@ export default () => {
                 label="Title"
                 name="title"
                 errors={errors.title}
-                value={values.title}
+                value={values.title[locale]}
                 onChange={handleChange}
               />
             </div>
             <LoadingButton
               loading={sending}
+              disabled={!can}
               type="submit"
               className="ml-auto btn-indigo"
             >

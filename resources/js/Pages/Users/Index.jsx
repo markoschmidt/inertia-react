@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import Helmet from "react-helmet";
 import { InertiaLink, usePage } from "@inertiajs/inertia-react";
 import { BaseLayout as Layout } from "@/Components/Layouts";
 import Icon from "@/Components/Icon";
 import Pagination from "@/Components/Pagination/Pagination";
+import { MainContext } from "@/Contexts/MainContext"
 
 export default () => {
   const { users } = usePage().props;
-  const { data, links } = users;
+  const { data, links, ...props } = users;
+  const { locale } = useContext(MainContext);
 
   return (
     <Layout>
@@ -73,7 +75,7 @@ export default () => {
             </tbody>
           </table>
         </div>
-        <Pagination links={links} />
+        <Pagination links={links} usersData={users} />
       </div>
     </Layout>
   );

@@ -22,7 +22,6 @@ class UserSeeder extends Seeder
             ]);
             $roles = Role::where('guard_name', 'admin')->get();
             $user->roles()->attach($roles);
-
         }
 
     }

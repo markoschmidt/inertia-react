@@ -24,8 +24,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/')->name('dashboard')->uses('UserController@index');
 
     Route::resource('users', 'UserController');
+
     Route::resource('roles', 'RoleController');
     Route::resource('permissions', 'PermissionController');
-    Route::resource('categories', 'CategoryController');
+    Route::resource('categories', 'CategoryController')->except(['index']);
+    Route::get('categories')->uses('CategoryController@index')->name('categories.index');
     Route::post('categories/update')->uses('CategoryController@updateTree')->name('categories.updateTree');
 });

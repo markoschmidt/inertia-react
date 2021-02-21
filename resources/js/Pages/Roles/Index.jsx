@@ -1,24 +1,23 @@
-import React from 'react'
-import Helmet from 'react-helmet'
-import { InertiaLink, usePage } from '@inertiajs/inertia-react'
-import { BaseLayout as Layout} from '@/Components/Layouts'
-import Icon from '@/Components/Icon'
-import Pagination from '@/Components/Pagination/Pagination'
-import { Inertia } from '@inertiajs/inertia'
+import React, { useContext } from "react";
+import Helmet from "react-helmet";
+import { InertiaLink, usePage } from "@inertiajs/inertia-react";
+import { BaseLayout as Layout } from "@/Components/Layouts";
+import { MainContext } from "@/Contexts/MainContext";
 
 export default () => {
-  const { roles } = usePage().props
-  const { data, links } = roles
+  const { roles } = usePage().props;
+  const { data, links } = roles;
+  const { locale } = useContext(MainContext);
 
   return (
     <Layout>
       <div>
         <Helmet title="Roles" />
-        <h1 className="mb-8 font-bold text-3xl">Roles</h1>
-        <div className="bg-white roudned shadow overflow-x-auto">
+        <h1 className="mb-8 text-3xl font-bold">Roles</h1>
+        <div className="overflow-x-auto bg-white shadow roudned">
           <table className="w-full whitespace-no-wrap">
             <thead>
-              <tr className="text-left font-bold">
+              <tr className="font-bold text-left">
                 <th className="px-6 pt-5 pb-4">Name</th>
               </tr>
             </thead>
@@ -30,17 +29,17 @@ export default () => {
                 >
                   <td className="border-t">
                     <InertiaLink
-                      href={route('roles.edit', id)}
-                      className="px-6 py-4 flex items-center focus:text-indigo-700"
+                      href={route("roles.edit", id)}
+                      className="flex items-center px-6 py-4 focus:text-indigo-700"
                     >
-                      {name}
+                      {name[locale]}
                     </InertiaLink>
                   </td>
                 </tr>
               ))}
               {data.length === 0 && (
                 <tr>
-                  <td className="border-t px-6 py-4" colSpan="4">
+                  <td className="px-6 py-4 border-t" colSpan="4">
                     No roles found.
                   </td>
                 </tr>
@@ -50,5 +49,5 @@ export default () => {
         </div>
       </div>
     </Layout>
-  )
-}
+  );
+};

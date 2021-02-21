@@ -6,16 +6,26 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Blade;
+use Inertia\ServiceProvider as BaseInertiaServiceProvider;
 
-class InertiaServiceProvider extends ServiceProvider
+class InertiaServiceProvider extends BaseInertiaServiceProvider
 {
     public function register()
+    {
+        $this->registerInertia();
+    }
+
+    protected function registerInertia()
     {
         Inertia::version(function () {
             return md5_file(public_path('mix-manifest.json'));
         });
 
         Inertia::share([
+            'locale' => function () {
+                return \App::getLocale();
+            },
             'auth' => function () {
                 return [
                     'user' => Auth::user() ? [

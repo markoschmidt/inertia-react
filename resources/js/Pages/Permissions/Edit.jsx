@@ -15,8 +15,6 @@ export default () => {
     name: permission.name,
   });
 
-  console.log(permission)
-
   function handleSubmit(e) {
     e.preventDefault();
     setSending(true);

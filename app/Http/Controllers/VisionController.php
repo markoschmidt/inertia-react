@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+// use Google\Cloud\Vision\V1\ImageAnnotatorClient;
 
 class VisionController extends Controller
 {
@@ -11,23 +11,32 @@ class VisionController extends Controller
     public $annotator = null;
     public function __construct()
     {
-        $this->annotator = new ImageAnnotatorClient();
+        // $this->annotator = new ImageAnnotatorClient();
     }
 
     public function index(Request $request)
     {
         $filepath = '/storage/sample_1280x853.jpg';
+        $file = file_get_contents(public_path($filepath));
+        $labels = [];
+        $props = [];
+        $texts = [];
+        $objects = [];
         if ($request->has('file')) {
             $file = $request->file('file');
             $filepath = '/storage/' . $file->getClientOriginalName();
             if (!file_exists(public_path($filepath))) {
                 file_put_contents(public_path($filepath), file_get_contents($file));
             }
+            $file = file_get_contents($file);
         }
-        $file = file_get_contents(public_path($filepath));
         $labels = $this->labelDetection($file);
         $props = $this->imageProperties($file);
         $texts = $this->textDetection($file);
+        // TODO: Show objects in blade
+        $objects = $this->objectLocalization($file);
+
+        // dump($objects);
 
         return view('home', compact('filepath', 'labels', 'props', 'texts'));
         // dd('stop');
@@ -90,17 +99,29 @@ class VisionController extends Controller
                             $text .= ' ';
                         }
                     }
-                    $texts[$blockKey]['text'] = $text;
-                    $texts[$blockKey]['confidence'] = $block->getConfidence();
+                    if ($block->getConfidence() > 0.7) {
+                        $texts[$blockKey]['text'] = $text;
+                        $texts[$blockKey]['confidence'] = $block->getConfidence();
 
-                    $vertices = $block->getBoundingBox()->getVertices();
-                    foreach ($vertices as $vertexKey => $vertex) {
-                        $texts[$blockKey][$vertexKey]['x'] = $vertex->getX();
-                        $texts[$blockKey][$vertexKey]['y'] = $vertex->getY();
+                        $vertices = $block->getBoundingBox()->getVertices();
+                        foreach ($vertices as $vertexKey => $vertex) {
+                            $texts[$blockKey][$vertexKey]['x'] = $vertex->getX();
+                            $texts[$blockKey][$vertexKey]['y'] = $vertex->getY();
+                        }
                     }
                 }
             }
         }
         return $texts;
+    }
+
+    public function objectLocalization($file)
+    {
+        $path = 'https://cloud.google.com/vision/docs/images/bicycle_example.png';
+        $response = $this->annotator->objectLocalization($file);
+        $objects = $response->getLocalizedObjectAnnotations();
+
+        return $objects;
+        $this->annotator->close();
     }
 }
