@@ -12,7 +12,7 @@ export default () => {
 
   return (
     <div className="flex items-center justify-end w-full p-4 text-sm bg-white border-b md:py-0 md:px-12 d:text-md">
-      <button className="px-4 py-1 mr-4 text-white bg-indigo-700 border rounded hover:bg-gray-500" onClick={() => toggleLocale()}>{locale}</button>
+      <button className="px-4 py-1 mr-4 text-white bg-indigo-700 border rounded hover:bg-gray-500 focus-within:bg-gray-500" onClick={() => toggleLocale()}>{locale}</button>
       <Dropdown>
         <div
           key="icon"

@@ -1,30 +1,22 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState } from "react";
 
 export const MainContext = createContext();
 
-const MainContextProvider = ({children}) => {
-
-  const defaultLocale = localStorage.getItem('imagebank_locale');
-  const [locale, setLocale] = useState(defaultLocale || 'fi');
+const MainContextProvider = ({ children }) => {
+  const defaultLocale = localStorage.getItem("locale") || "fi";
+  const [locale, setLocale] = useState(defaultLocale);
 
   const toggleLocale = () => {
-    setLocale(locale === 'fi' ? 'en' : 'fi')
-  }
-
-  useEffect(() => {
-    localStorage.setItem('imagebank_locale', locale)
-  }, [locale]);
+    const newLocale = locale === "fi" ? "en" : "fi";
+    setLocale(newLocale);
+    localStorage.setItem("locale", newLocale);
+  };
 
   const value = {
     locale,
-    toggleLocale
-  }
-
-  return (
-    <MainContext.Provider value={value}>
-      {children}
-    </MainContext.Provider>
-  )
-}
+    toggleLocale,
+  };
+  return <MainContext.Provider value={value}>{children}</MainContext.Provider>;
+};
 
 export default MainContextProvider;

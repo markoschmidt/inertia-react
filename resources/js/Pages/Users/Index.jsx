@@ -8,7 +8,7 @@ import { MainContext } from "@/Contexts/MainContext"
 
 export default () => {
   const { users } = usePage().props;
-  const { data, links } = users;
+  const { data, links, ...props } = users;
   const { locale } = useContext(MainContext);
 
   return (
@@ -75,7 +75,7 @@ export default () => {
             </tbody>
           </table>
         </div>
-        <Pagination links={links} />
+        <Pagination links={links} usersData={users} />
       </div>
     </Layout>
   );

@@ -61,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
                     return [
                         'data' => $this->items->toArray(),
                         'links' => $this->links(),
+                        'total' => $this->total,
+                        'perPage' => $this->perPage(),
+                        'lastPage' => $this->lastPage(),
+                        'currentPage' => $this->currentPage()
                     ];
                 }
 
@@ -68,43 +72,76 @@ class AppServiceProvider extends ServiceProvider
                 {
                     $this->appends(Request::all());
 
-                    $window = UrlWindow::make($this);
+                    // $window = UrlWindow::make($this);
+                    $elements = [];
 
-                    $elements = array_filter([
-                        $window['first'],
-                        is_array($window['slider']) ? '...' : null,
-                        $window['slider'],
-                        is_array($window['last']) ? '...' : null,
-                        $window['last'],
-                    ]);
-
-                    return Collection::make($elements)->flatMap(function ($item) {
-                        if (is_array($item)) {
-                            return Collection::make($item)->map(function ($url, $page) {
-                                return [
-                                    'url' => $url,
-                                    'label' => $page,
-                                    'active' => $this->currentPage() === $page,
-                                ];
-                            });
-                        } else {
-                            return [
-                                [
-                                    'url' => null,
-                                    'label' => '...',
-                                    'active' => false,
-                                ],
-                            ];
-                        }
-                    })->prepend([
+                    $current = [
+                        'url' => null,
+                        'label' => 'Current',
+                        'active' => true
+                    ];
+                    $first = [
+                        'url' => $this->url(1),
+                        'label' => 'First',
+                        'active' => false,
+                    ];
+                    $previous = [
                         'url' => $this->previousPageUrl(),
                         'label' => 'Previous',
                         'active' => false,
-                    ])->push([
+                    ];
+                    $next = [
                         'url' => $this->nextPageUrl(),
                         'label' => 'Next',
                         'active' => false,
-                    ]);
+                    ];
+                    $last = [
+                        'url' => $this->url($this->lastPage()),
+                        'label' => 'Last',
+                        'active' => false,
+                    ];
+
+                    array_push($elements, $current);
+                    $this->currentPage !== 1 && array_unshift($elements, $first, $previous);
+                    $this->currentPage !== $this->lastPage() && array_push($elements, $next, $last);
+
+                    return $elements;
+
+                    // $elements = array_filter([
+                    //     $window['first'],
+                    //     is_array($window['slider']) ? '...' : null,
+                    //     $window['slider'],
+                    //     is_array($window['last']) ? '...' : null,
+                    //     $window['last'],
+                    // ]);
+
+                    // return Collection::make($elements)->flatMap(function ($item) {
+                    //     if (is_array($item)) {
+                    //         return Collection::make($item)->map(function ($url, $page) {
+                    //             return [
+                    //                 'url' => $url,
+                    //                 'label' => $page,
+                    //                 'active' => $this->currentPage() === $page,
+                    //             ];
+                    //         });
+                    //     } else {
+                    //         return [
+                    //             [
+                    //                 'url' => null,
+                    //                 'label' => '...',
+                    //                 'active' => false,
+                    //             ],
+                    //         ];
+                    //     }
+                    // })->prepend([
+                    //     'url' => $this->previousPageUrl(),
+                    //     'label' => 'Previous',
+                    //     'active' => false,
+                    // ])->push([
+                    //     'url' => $this->nextPageUrl(),
+                    //     'label' => 'Next',
+                    //     'active' => false,
+                    // ]);
                 }
             };
         });

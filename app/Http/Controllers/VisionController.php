@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+// use Google\Cloud\Vision\V1\ImageAnnotatorClient;
 
 class VisionController extends Controller
 {
@@ -11,7 +11,7 @@ class VisionController extends Controller
     public $annotator = null;
     public function __construct()
     {
-        $this->annotator = new ImageAnnotatorClient();
+        // $this->annotator = new ImageAnnotatorClient();
     }
 
     public function index(Request $request)

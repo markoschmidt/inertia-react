@@ -6,10 +6,13 @@ use App\Traits\HasTranslations;
 use App\Traits\ModelScopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Spatie\Permission\Traits\HasPermissions;
 
 class Category extends Model
 {
-    use HasFactory, HasTranslations, ModelScopes;
+    use HasFactory, HasTranslations, ModelScopes, HasPermissions;
 
     public $translatable = ['title'];
 
@@ -27,6 +30,11 @@ class Category extends Model
         'updated_at', 'created_at'
     ];
 
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, CategoryHasProducts::class);
+    }
+
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
@@ -41,7 +49,8 @@ class Category extends Model
     {
         $data = [
             'title' => $this->getTranslations('title'),
-            'parent_id' => $this->parent_id,
+            'disabled' => !$this->userCanSee(),
+            'canEdit' => $this->userCanEdit(),
         ];
 
         if ($isTree) {
@@ -51,11 +60,57 @@ class Category extends Model
         }
 
         if ($addRelations) {
-            $data['children'] = $this->children()->count() ? $this->children->toQuery()->order('order')->get()->transform(function ($category) use ($isTree) {
-                return $category->getData(true, $isTree);
-            }) : [];
+            if (is_array($addRelations)) {
+                foreach ($addRelations as $relation) {
+
+                    $callable = [
+                        $this,
+                        'get' . ucfirst($relation) . 'data'
+                    ];
+                    $data[$relation] = call_user_func($callable, $addRelations, $isTree);
+                }
+            } else {
+                $data['children'] = $this->getChildrenData($addRelations, $isTree);
+                $data['products'] = [];
+                // $data['products'] = $this->getProductsData();
+            }
         }
 
         return $data;
+    }
+
+    protected function getChildrenData($addRelations, $isTree)
+    {
+        return $this->children()->count() ?
+            $this->children()
+            ->order('order')
+            ->get()
+            ->transform(function ($category) use ($addRelations, $isTree) {
+                return $category->getData($addRelations, $isTree);
+            }) : [];
+    }
+
+    protected function getProductsData()
+    {
+        $perPage = intval(Request::input('perPage', 16));
+        return $this->products()->paginate($perPage)->transform(function ($product) {
+            return $product->getData();
+        });
+    }
+
+    public function userCanEdit()
+    {
+        if ($this->id) {
+            return Auth::user()->can('categories.write.' . $this->id);
+        }
+        return false;
+    }
+
+    public function userCanSee()
+    {
+        if ($this->id) {
+            return Auth::user()->can('categories.read.' . $this->id);
+        }
+        return false;
     }
 }

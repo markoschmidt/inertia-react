@@ -8,12 +8,15 @@ import { Inertia } from "@inertiajs/inertia";
 import { loop } from "@/utils";
 import { ArrowDownOutlined } from "@ant-design/icons";
 import { MainContext } from "@/Contexts/MainContext";
-// import "./styles.css";
+import Pagination from "../../Components/Pagination/Pagination";
 
+/**
+ * TODO: Add async data loading
+ * https://ant.design/components/tree/
+ */
 export default () => {
-  const { categories } = usePage().props;
+  const { categories, category } = usePage().props;
   const [data, setData] = useState(categories);
-  const [expandedKeys, setExpandedKeys] = useState([]);
   const { locale } = useContext(MainContext);
 
   const onDrop = (info, categories, setCategories) => {
@@ -66,52 +69,62 @@ export default () => {
     Inertia.post(route("categories.updateTree"), data);
   };
 
-  // TODO: WIP
-  const onExpand = (expandedKeys, info, data, setExpandedKeys) => {
-    const node = info.node; // Toggled node
-    const expanded = info.expanded; // Was it expanded?
-
-    console.log(node)
-
-    // Keep opened node + parent nodes, collapse others
-
-    let keepOpen = [];
-    if (expanded) {
-      keepOpen.push(node.key);
-      expandedKeys.reverse().map((key, index, arr) => {
-        let item = null;
-        // Find the current item recursively
-        loop(data, key, (it) => {
-          item = it;
-        });
-        if (item && item.parent_id) {
-          keepOpen.push(item.parent_id);
-        }
-      });
-    } else {
-      keepOpen = expandedKeys;
-    }
-
-    setExpandedKeys(keepOpen);
+  const onSelect = (keys, info) => {
+    Inertia.visit("/categories?category=" + info.node.key, {
+      only: ["category"],
+    });
   };
 
   return (
     <Layout>
+      <Helmet title="Categories" />
       <div className="w-3/12">
-        <Helmet title="Categories" />
         <h1 className="mb-8 text-3xl font-bold">Categories</h1>
         <Tree
-          treeData={data}
-          draggable
-          blockNode
           autoExpandParent={true}
-          key={'id'}
-          titleRender={(node) => node.title[locale]}
-          switcherIcon={<ArrowDownOutlined style={{ fontSize: 16 }} />}
-          onExpand={(keys, info) => onExpand(keys, info, data, setExpandedKeys)}
+          blockNode
+          draggable
+          defaultExpandedKeys={category && [category.key]}
+          defaultSelectedKeys={category && [category.key]}
+          key={"id"}
           onDrop={(info) => onDrop(info, data, setData)}
+          onSelect={(keys, info) => onSelect(keys, info)}
+          switcherIcon={<ArrowDownOutlined style={{ fontSize: 16 }} />}
+          titleRender={(node) => `${node.title[locale]}`}
+          treeData={data}
         />
       </div>
+      {category && (
+        <div className="w-8/12">
+          {category.canEdit && (
+            <>
+              <InertiaLink href={route("categories.edit", category.key)}>
+                <div className="my-8 text-3xl font-bold">
+                  Edit category {category.key}
+                </div>
+              </InertiaLink>
+            </>
+          )}
+          {!category.canEdit && (
+            <h2 className="my-8 text-3xl font-bold">
+              Can't edit this category
+            </h2>
+          )}
+          {!category.disabled && (
+            <>
+              <div className="grid grid-cols-3">
+                {category.products.data.map(({ name, description }, key) => (
+                  <div className="" key={key}>
+                    <div>{name[locale]}</div>
+                    <div>{description[locale]}</div>
+                  </div>
+                ))}
+              </div>
+              <Pagination links={category.products.links} currentPage={category.products.currentPage} lastPage={category.products.lastPage} />
+            </>
+          )}
+        </div>
+      )}
     </Layout>
   );
 };

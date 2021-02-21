@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -19,14 +21,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
+
         return Inertia::render('Categories/Index', [
             'filters' => [],
-            'categories' => Category::whereNull('parent_id')
+            'categories' => fn () => Category::whereNull('parent_id')
                 ->order('order')
                 ->get()
-                ->transform(function($category) {
-                    return $category->getData(true, true);
-                })
+                ->transform(function ($category) {
+                    return $category->getData(['children'], true);
+                }),
+            'category' => fn () =>
+                Request::input('category')
+                ? Category::find(Request::input('category'))->getData(['products'], true)
+                :  null
+
         ]);
     }
 
@@ -70,6 +78,7 @@ class CategoryController extends Controller
     {
         return Inertia::render('Categories/Edit', [
             'category' => $category->getData(true),
+            'can' => Auth::user()->can('categories.edit.' . $category->id)
         ]);
     }
 
@@ -104,7 +113,8 @@ class CategoryController extends Controller
 
         // Helper to loop through all nodes in a tree
         // TODO: Move this somewhere else to make it usable elsewhere
-        function loop($items, $parent, $callback) {
+        function loop($items, $parent, $callback)
+        {
             foreach ($items as $order => $item) {
                 if (count($item['children']) > 0) {
                     $callback($item, $parent, $order);

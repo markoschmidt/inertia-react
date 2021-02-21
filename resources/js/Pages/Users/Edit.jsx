@@ -14,7 +14,7 @@ export default () => {
   const [values, setValues] = useState({
     name: user.name,
     email: user.email,
-    password: user.password,
+    password: '',
   });
 
   function handleSubmit(e) {
@@ -77,6 +77,8 @@ export default () => {
                 className="w-full pb-8 pr-6 lg:w-1/2"
                 label="Password"
                 name="password"
+                type="password"
+                autoComplete="new-password"
                 errors={errors.password}
                 value={values.password}
                 onChange={handleChange}

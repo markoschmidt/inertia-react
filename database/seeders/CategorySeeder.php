@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
@@ -21,6 +23,24 @@ class CategorySeeder extends Seeder
                 'title' => ['en' => "Main category $i", 'fi' => "Pääkategoria $i"],
                 'parent_id' => $parent,
             ]);
+
+            $permission = Permission::create([
+                'name' => ['en' => 'categories.write.'.$i, 'fi' => 'categories.write.'.$i]
+            ]);
+            $addPermission = random_int(0, 1);
+
+            if ($addPermission) {
+                $admin->givePermissionTo($permission->id);
+            }
+
+            $permission = Permission::create([
+                'name' => ['en' => 'categories.read.'.$i, 'fi' => 'categories.read.'.$i]
+            ]);
+            $addPermission = random_int(0, 1);
+
+            if ($addPermission) {
+                $admin->givePermissionTo($permission->id);
+            }
         }
     }
 }
