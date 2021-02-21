@@ -1,36 +1,30 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 export const MainContext = createContext();
 
-class MainContextProvider extends React.Component {
-  constructor(props) {
-    super(props);
+const MainContextProvider = ({children}) => {
 
-    this.toggleLocale = this.toggleLocale.bind(this)
+  const defaultLocale = localStorage.getItem('imagebank_locale');
+  const [locale, setLocale] = useState(defaultLocale || 'fi');
 
-    this.state = {
-      locale: 'fi',
-    }
+  const toggleLocale = () => {
+    setLocale(locale === 'fi' ? 'en' : 'fi')
   }
 
-  toggleLocale() {
-    this.setState({
-      locale: this.state.locale === 'fi' ? 'en' : 'fi'
-    })
+  useEffect(() => {
+    localStorage.setItem('imagebank_locale', locale)
+  }, [locale]);
+
+  const value = {
+    locale,
+    toggleLocale
   }
 
-  render() {
-    const value = {
-      ...this.state,
-      toggleLocale: this.toggleLocale,
-    };
-
-    return (
-      <MainContext.Provider value={value}>
-        {this.props.children}
-      </MainContext.Provider>
-    );
-  }
+  return (
+    <MainContext.Provider value={value}>
+      {children}
+    </MainContext.Provider>
+  )
 }
 
 export default MainContextProvider;
