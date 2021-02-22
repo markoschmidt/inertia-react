@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class CategorySeeder extends Seeder
 {
@@ -16,7 +17,8 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 500; $i++) {
+        $admin = User::find(1);
+        for ($i = 1; $i <= 50; $i++) {
             $randomNumber = rand(0, $i) / 2;
             $parent =  $randomNumber > 1 ? floor($randomNumber) : null;
             Category::create([
