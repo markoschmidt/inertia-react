@@ -1,5 +1,6 @@
+include .env
+
 PROJECT=$(notdir $(CURDIR)) # project directory name
-DATABASE=$(PROJECT)_db
 
 php:
 	docker-compose exec app bash
@@ -26,16 +27,16 @@ make restart:
 	docker-compose restart
 
 mysql-drop:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -uroot -psecret -e 'drop database $(DATABASE);'"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE);'"
 
 mysql-create:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -uroot -psecret -e 'create database $(DATABASE);'"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'create database $(DB_DATABASE);'"
 
 mysql-load:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -uroot -psecret -e 'drop database $(DATABASE); create database $(DATABASE); use $(DATABASE); source dump.sql;'"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE); create database $(DB_DATABASE); use $(DB_DATABASE); source dump.sql;'"
 
 mysql-dump:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysqldump -uroot -psecret $(DATABASE) > dump.sql"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysqldump -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE) > dump.sql"
 
 migrate:
 	docker-compose exec app php artisan migrate
