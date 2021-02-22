@@ -11,6 +11,8 @@ module.exports = {
     'no-console': 'off',
     'no-undef': 'off',
     'react/display-name': false,
-    'react/prop-types': false
+    'react/prop-types': false,
+    'react/jsx-one-expression-per-line': 0,
+    'react/jsx-props-no-spreading': 'off',
   }
 };
