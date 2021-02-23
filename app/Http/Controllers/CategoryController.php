@@ -21,20 +21,18 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
         return Inertia::render('Categories/Index', [
             'filters' => [],
             'categories' => fn () => Category::whereNull('parent_id')
                 ->order('order')
                 ->get()
                 ->transform(function ($category) {
-                    return $category->getData(['children'], true);
+                    return $category->getData(true, true);
                 }),
             'category' => fn () =>
                 Request::input('category')
-                ? Category::find(Request::input('category'))->getData(['products'], true)
-                :  null
-
+                ? Category::find(Request::input('category'))->getData(true, true)
+                :  null,
         ]);
     }
 

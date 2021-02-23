@@ -51,6 +51,7 @@ class Category extends Model
             'title' => $this->getTranslations('title'),
             'disabled' => !$this->userCanSee(),
             'canEdit' => $this->userCanEdit(),
+            'isLeaf' => !(bool) $this->children()->count(),
         ];
 
         if ($isTree) {
@@ -70,13 +71,25 @@ class Category extends Model
                     $data[$relation] = call_user_func($callable, $addRelations, $isTree);
                 }
             } else {
-                $data['children'] = $this->getChildrenData($addRelations, $isTree);
-                $data['products'] = [];
-                // $data['products'] = $this->getProductsData();
+                $category = intval(Request::input('category'));
+                $arr = [];
+                if ($category) {
+                    $this->rootlineOfCategory($category, $arr);
+                }
+                $data['children'] = in_array($this->id, $arr) ? $this->getChildrenData($addRelations, $isTree) : null;
+                $data['products'] = $category === $this->id ? $this->getProductsData() : null;
             }
         }
 
         return $data;
+    }
+
+    protected function rootlineOfCategory($category, &$arr) {
+        $arr[] = $category;
+        $category = Category::find($category);
+        if ($category->parent_id) {
+            $this->rootlineOfCategory($category->parent_id, $arr);
+        }
     }
 
     protected function getChildrenData($addRelations, $isTree)

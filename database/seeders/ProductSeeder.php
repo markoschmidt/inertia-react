@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         $max = Category::count();
-        for ($i = 1; $i <= 500; $i++) {
+        for ($i = 1; $i <= 1000; $i++) {
             $product = Product::create([
                 'name' => ['en' => "Product $i", 'fi' => "Tuote $i"],
                 'description' => ['en' => "Description for product $i", 'fi' => "Kuvaus tuottelle $i"],
