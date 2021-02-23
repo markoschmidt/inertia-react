@@ -1,6 +1,7 @@
 include .env
+DB_DUMP=dump.sql
 
-PROJECT=$(notdir $(CURDIR)) # project directory name
+PROJECT=$(notdir $(CURDIR))# project directory name
 
 php:
 	docker-compose exec app bash
@@ -27,16 +28,19 @@ make restart:
 	docker-compose restart
 
 mysql-drop:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE);'"
+	@docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE);' > /dev/null 2>&1"
 
 mysql-create:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'create database $(DB_DATABASE);'"
+	@docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'create database $(DB_DATABASE);' > /dev/null 2>&1"
+
+mysql-refresh:
+	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE); create database $(DB_DATABASE); use $(DB_DATABASE); source $(DB_DUMP);'"
 
 mysql-load:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'drop database $(DB_DATABASE); create database $(DB_DATABASE); use $(DB_DATABASE); source dump.sql;'"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) -e 'use $(DB_DATABASE); source $(DB_DUMP);'"
 
 mysql-dump:
-	docker exec -it $(PROJECT)_db_1 bash -c "mysqldump -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE) > dump.sql"
+	docker exec -it $(PROJECT)_db_1 bash -c "mysqldump -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE) > $(DB_DUMP)"
 
 migrate:
 	docker-compose exec app php artisan migrate
@@ -51,26 +55,27 @@ composer-update:
 	docker-compose exec app php composer.phar update
 
 install:
-	# condition isn't working
-	# if [ -f .env ] && make up mysql-create setup
+ifdef APP_NAME
+	make up mysql-drop mysql-create setup
+else
+	echo .env is probably missing from the root folder
+endif
 
 setup:
 	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 	php composer-setup.php
 	php -r "unlink('composer-setup.php');"
-	# cp .env.example .env
 	docker-compose build
 	docker-compose up -d
 	docker-compose exec app php composer.phar install
 	docker-compose exec app php artisan key:generate
-	# docker-compose exec app php artisan nova:publish
-	# docker-compose exec app php composer.phar update
 	docker-compose exec app php artisan migrate --seed
 	docker-compose exec app php artisan storage:link
 	docker-compose exec app supervisorctl reread
 	docker-compose exec app supervisorctl update
 	docker-compose exec app supervisorctl start laravel-worker:*
 	sudo chgrp -R www-data .
+	sudo chown -R 1000 .
 	sudo find . -path ./.git -prune \
 		-o -path ./node_modules -prune \
 		-o -path ./vendor -prune \
@@ -94,14 +99,3 @@ files:
 		-o -path ./vendor -prune \
 		-o -type d -not -perm 775 -exec chmod 775 {} \;
 	sudo chmod -R 774 storage bootstrap/cache
-
-update-production:
-	php artisan down
-	git pull
-	php artisan migrate
-	php artisan config:cache
-	sudo supervisorctl restart laravel-worker:*
-	php artisan up
-
-export-localizations:
-	php scripts/langToExcel.php
