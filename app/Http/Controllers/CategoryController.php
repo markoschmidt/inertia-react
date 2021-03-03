@@ -27,7 +27,7 @@ class CategoryController extends Controller
                 ->order('order')
                 ->get()
                 ->transform(function ($category) {
-                    return $category->getData(true, true);
+                    return $category->getData(false, true);
                 }),
             'category' => fn () =>
                 Request::input('category')

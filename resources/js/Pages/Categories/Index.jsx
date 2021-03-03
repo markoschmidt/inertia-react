@@ -72,11 +72,22 @@ export default () => {
   };
 
   const onSelect = (keys, info) => {
+    console.log("onselect");
     Inertia.visit(
       route("categories.index", {
         category: info.node.key,
       }),
-      { only: ["category"] }
+      {
+        only: ["category"],
+        onSuccess: (response) => {
+          const { category } = response.props;
+          console.log(category)
+          setData((origin) =>
+            updateTreeData(origin, key, category.children)
+          );
+          return;
+        },
+      },
     );
   };
 
@@ -95,7 +106,7 @@ export default () => {
     });
   }
 
-  const onLoadData = ({ key, children }) => {
+  const onLoadData = ({ key, children, ...props }) => {
     return new Promise((resolve) => {
       if (children) {
         resolve();
@@ -110,6 +121,7 @@ export default () => {
             only: ["category"],
             onSuccess: (response) => {
               const { category } = response.props;
+              console.log(category)
               setData((origin) =>
                 updateTreeData(origin, key, category.children)
               );

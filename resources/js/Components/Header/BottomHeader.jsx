@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
-import { InertiaLink, usePage } from "@inertiajs/inertia-react";
+import React, { useContext } from "react";
+import { usePage } from "@inertiajs/inertia-react";
 import Icon from "@/Components/Icon";
 import Dropdown from "@/Components/Dropdown";
-import { LogoutButton, LinkButton } from "@/Components/Buttons";
+import { LinkButton } from "@/Components/Buttons";
 import { MainContext } from "../../Contexts/MainContext"
 
 export default () => {
   const { auth } = usePage().props;
-  const [menuOpened, setMenuOpened] = useState(false);
   const { locale, toggleLocale } = useContext(MainContext);
 
   return (

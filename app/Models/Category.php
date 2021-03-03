@@ -52,6 +52,7 @@ class Category extends Model
             'disabled' => !$this->userCanSee(),
             'canEdit' => $this->userCanEdit(),
             'isLeaf' => !(bool) $this->children()->count(),
+            'children' => [],
         ];
 
         if ($isTree) {
